@@ -77,6 +77,8 @@ const BookingsTable = () => {
         <CreateEditModal 
             open={showCreate} 
             onClose={() => {
+                setDocId(undefined)
+                setSelectedBooking(undefined);
                 setShowCreate(!showCreate);
                 getBookings();
             }}

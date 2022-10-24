@@ -2,7 +2,7 @@ import { Button, Snackbar, Stack, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal"
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { doc } from 'firebase/firestore';
 import { setDoc } from 'firebase/firestore';
 import { firestore } from '../firebase/clientApp';
@@ -13,9 +13,8 @@ import {updateDoc} from "@firebase/firestore";
 interface IProps{
     open: boolean;
     onClose: () => void;
-    selectedBooking?: IBooking;
+    selectedBooking? : IBooking;
     documentId?: string;
-
 }
 
 
@@ -31,17 +30,18 @@ const style = {
     p: 4,
   };
 
-const CreateEditModal = ({ open, onClose, selectedBooking, documentId }: IProps) => {
-    console.log('Selected prop ', selectedBooking);
-    const [booking, setBooking]  = useState<IBooking>({
-        seeker:  selectedBooking ? selectedBooking.seeker : '',
-        giver: selectedBooking ? selectedBooking.giver : '',
-        date:  selectedBooking ? selectedBooking.date : new Date(),
-        amount:  selectedBooking ? selectedBooking.amount : 0,
+const CreateEditModal = ({ open, onClose, selectedBooking, documentId }: IProps) => {    
+    const [booking, setBooking]  = useState<IBooking>( selectedBooking || {
+        seeker:  '',
+        giver:  '',
+        date:  new Date(),
+        amount: 0,
     });
-    console.log("The booking ", booking)
+
+    useEffect(() => setBooking(selectedBooking as IBooking), [selectedBooking]);
     const [message, setMessage] = useState<string>('');
     const [showMessage, setShowMessage] = useState<boolean>(false);
+
 
     const formatDate = (date: Date) => {
         return date.toISOString().substring(0,10)
@@ -54,10 +54,9 @@ const CreateEditModal = ({ open, onClose, selectedBooking, documentId }: IProps)
             seeker: booking.seeker,
             giver: booking.giver,
             date: getUnixTime(booking.date),
-            amount: booking.amount,
+            amount:  booking.amount,
         };
 
-        console.log('Updated data', updatedData);
         await updateDoc(bookingRef, {
             seeker: booking.seeker,
             giver: booking.giver,
@@ -152,7 +151,7 @@ const CreateEditModal = ({ open, onClose, selectedBooking, documentId }: IProps)
                                     label="Date"
                                     type="date"
                                     defaultValue={formatDate(selectedBooking ? selectedBooking.date : new Date())}
-                                    sx={{ width: 220 }}
+                                    fullWidth
                                     InputLabelProps={{
                                         shrink: true
                                     }}
@@ -174,7 +173,10 @@ const CreateEditModal = ({ open, onClose, selectedBooking, documentId }: IProps)
                         <Stack direction="row" spacing={2}>
                             <Button
                                 variant='outlined'
-                                onClick={onClose}
+                                onClick={() => {
+                                    clear();
+                                    onClose();
+                                }}
                             >
                                 Cancel
                             </Button>
