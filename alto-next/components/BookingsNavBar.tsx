@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 const BookingsNavBar = ({ children }: { children: React.ReactNode }) => {
   const { logOut } = useAuth();
   const router = useRouter();
+  const { user } = useAuth();
  
   const logout = async () => {
     try {
@@ -22,23 +23,28 @@ const BookingsNavBar = ({ children }: { children: React.ReactNode }) => {
 
   
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Bookings
-          </Typography>
-          <Button 
-            color="inherit"
-            onClick={async () => {
-              await logout();
-            }}
-          >
-            Logout
-          </Button>
-        </Toolbar>
-      </AppBar>
-    </Box>
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Bookings
+            </Typography>
+            <Typography>{user.email}</Typography>
+            <Button 
+              color="inherit"
+              variant='outlined'
+              onClick={async () => {
+                await logout();
+              }}
+            >
+              Logout
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      {children}
+    </>
   );
 }
 export default BookingsNavBar
