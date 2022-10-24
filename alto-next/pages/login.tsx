@@ -5,12 +5,15 @@ import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
 import { Stack } from "@mui/system";
+import Snackbar from "@mui/material/Snackbar";
 
 
 
 const Login = () => {
     const router = useRouter();
     const { logIn } = useAuth();
+    const [message, setMessage] = useState<string>('');
+    const [showMessage, setShowMessage] = useState<boolean>(false);
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
@@ -20,6 +23,10 @@ const Login = () => {
           router.push("/");
         } catch (error: any) {
           console.log(error.message);
+          setMessage(error.message);
+          setShowMessage(true)
+          setEmail('');
+          setPassword('');
         }
       };
 
@@ -33,6 +40,13 @@ const Login = () => {
             }}
 
         >   
+            <Snackbar
+                open={showMessage}
+                autoHideDuration={6000}
+                onClose={() => setShowMessage(false)}
+                message={message}
+            />
+         
             <Stack spacing={2}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
                     Log In
@@ -48,6 +62,7 @@ const Login = () => {
                             id="outlined-required"
                             label="Email"
                             fullWidth
+                            value={email}
                             onChange={(e) => {setEmail(e.target.value)}}
                         />
                     </div>
@@ -61,6 +76,7 @@ const Login = () => {
                             label="Password"
                             type={'password'}
                             fullWidth
+                            value={password}
                             onChange={(e) => {setPassword(e.target.value)}}
                         />
                     </div>

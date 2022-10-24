@@ -37,10 +37,11 @@ const CreateEditModal = ({ open, onClose, selectedBooking, documentId }: IProps)
         date:  new Date(),
         amount: 0,
     });
-
-    useEffect(() => setBooking(selectedBooking as IBooking), [selectedBooking]);
     const [message, setMessage] = useState<string>('');
     const [showMessage, setShowMessage] = useState<boolean>(false);
+
+    useEffect(() => setBooking(selectedBooking as IBooking), [selectedBooking]);
+
 
 
     const formatDate = (date: Date) => {
